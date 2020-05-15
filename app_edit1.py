@@ -308,9 +308,8 @@ def dashboard():
 
     
     if(current_user.username == 'Admin'):
-        return render_template('dashboard_admin.html',
+        return render_template('dashboard_admin.html',name=current_user.username, pending_req= pending_req, approvedreq_info= approvedreq_info, denyreq_info=denyreq_info, resultset=resultset)
 
- name = current_user.username, pending_req= pending_req, approvedreq_info= approvedreq_info, denyreq_info=denyreq_info, resultset=resultset)
     elif(current_user.username == 'internaluser'):
         print('internal user dashboard')
         apprInternal_info = RequestForm.query.filter_by(ownerid=current_user.id ,status = 'approved').all()
@@ -555,18 +554,46 @@ def submithipaaform(requestid_domain,dataset_id_final,dataset_risk):
      b=result_get.content
      
      #print(b)
-     b=b.encode("utf-8")
+     #b=b.encode("utf-8")
      b =json.loads(b)
-     #print(b)
+     for i in b:
+        a=i['requestId']
+        print(a)
+        print(len(i))
+        print(len(b))
+        c=i['requestId'],i['datasetId'],i['risk_level'],i['reputation'],i['decision']
+        d=i['decision']
+
+        e=i['datasetId']
+        print(c)
+        #print[i['requestId'],i['datasetId'],i['risk_level'],i['reputation'],i['decision']]
+        #print(i['requestId'])
+        #a=i['requestId']
+        
+        #print(i['requestId'])   
+
+   
+        #print(a)
+        #for i['requestId'] in b:
+         #   print[i['requestId'],i['datasetId'],i['risk_level'],i['reputation'],i['decision']]
+     #print("1st element :" b[requestId])
+     #with open('b') as f:
+      #   file=json.load(f)
+     #print(file['requestId'])    
+        
+     #print(b[requestId])
      #print type(dic)
      #print dic
-     with open('data.csv', 'w') as csv_file:
+     #with open('data.csv', 'w') as csv_file:
          #for requestId in b:
-         csv_writer = csv.writer(csv_file,lineterminator='\n')
-         csv_writer.writerow(b)
-
-     for requestId in b:
-         print(requestId)
+         #csv_writer = csv.writer(csv_file,lineterminator='\n')
+         #csv_writer.writerow(b)
+    # pendingreq_info = RequestForm.query.filter_by(ownerid=current_user.id, status = 'pending').all()
+    # pendingreq_info.requestid=requestId 
+    
+         #pendingreq_info = RequestForm.query.filter_by(ownerid=current_user.id, status = 'pending').all()
+         #pendingreq_info.requestid=requestId
+         #print(requestId)
      #content=request.get_json()
      #value1=content.get('decision')
      #print(value1)
@@ -601,10 +628,10 @@ def submithipaaform(requestid_domain,dataset_id_final,dataset_risk):
      #items = cursor.fetchall()
      if(current_user.username == 'internaluser'):
         # return render_template('hipaa.html',items=items)
-         return render_template('dashboard.html', form=form, pendingreq_info=pendingreq_info, apprInternal_info=apprInternal_info, deniedInternal_info=deniedInternal_info,data=data,b=b)
-        
+        # return render_template('dashboard.html', form=form, pendingreq_info=pendingreq_info, apprInternal_info=apprInternal_info, deniedInternal_info=deniedInternal_info,data=data,b=b,requestid_domain=requestid_domain,len=len(b),a=a,c=c,d=d)
+        return render_template('request_status.html',form=form, pendingreq_info=pendingreq_info, apprInternal_info=apprInternal_info, deniedInternal_info=deniedInternal_info,data=data,b=b,requestid_domain=requestid_domain,len=len(b),a=a,c=c,d=d,e=e)
      elif(current_user.username == 'externaluser'):
-         return render_template('dashboard.html', form=form, pendingreq_info=pendingreq_info, apprInternal_info=apprInternal_info, deniedInternal_info=deniedInternal_info,data=data)
+         return render_template('request_status.html', form=form, pendingreq_info=pendingreq_info, apprInternal_info=apprInternal_info, deniedInternal_info=deniedInternal_info,data=data,b=b,requestid_domain=requestid_domain,len=len(b),a=a,c=c,d=d,e=e)
 
 
 @app.route('/print_items')
@@ -881,6 +908,20 @@ def request_form():
     return render_template('request.html', form=form)
    # return render_template('bot/index_bot.html', form=form)
 
+@app.route('/viewdata/<dataid>',methods=['GET','POST'])
+def viewdata(dataid):
+    
+    print(dataid)
+    a=dataid
+    postgreSQL_select_Query = "select * from data_catalog where data_catalog.dataset_id = %(dataset_id)s"
+    cur.execute(postgreSQL_select_Query,{'dataset_id':dataid})
+    record = cur.fetchone()
+    print("Result",record)
+
+    
+    return render_template('status.html',name = current_user.username,dataid=dataid,record=record)
+
+
 
 @app.route('/feedbackform',methods=['GET','POST'])
 def feedback_form():
@@ -889,7 +930,7 @@ def feedback_form():
 
 @app.route('/submitfeedbackform',methods=['GET','POST'])
 def submitfeedbackform():
-    return render_template('dashboard.html')
+    return render_template('end.html')
 
 @app.route('/')
 def bc():

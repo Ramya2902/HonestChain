@@ -118,7 +118,8 @@ Dashboard
 		</form>
 		<form action =" {{url_for('feedback_form') }} " method ="get">
                         <input type = "submit"class = "btn btn-success" value="Feedback Form">
-		</form> 
+		</form>
+	
 	 	<div w3-include-html="/home/ubuntu/HonestChain/templates/bot/index_bot.html"></div>
           <h2 class="sub-header">Pending Requests</h2>
           <div class="table-responsive">
@@ -153,16 +154,21 @@ Dashboard
 			<!--  <th>Description</th> -->
 		   </tr> 
                     </thead>
-		    <tbody> 
+		    <tbody>
+			      <tr>
 
-			 <tr>
-                        {% for pendingreq_info in pendingreq_info %}
-                        <td><a href = "#"  onclick = "viewpendingreq('{{pendingreq_info.requestid}}')" id = '{{pendingreq_info.requestid}}'  method ="GET">{{pendingreq_info.requestid}}</a></td>
-			{% for requestId in b %}
-			<td id = "Details">{{requestId}}</td>
-                       {% endfor %}
-                </tr>
-		{% endfor %}
+                      		
+			 {% for i in b %}
+                                <td id = "ID">{{i['requestId']}}</td>
+                         <td id = "Details">{{i['decision']}}</td>
+                                <!--    <td id = "Details">{{b}}</td> -->
+
+
+                                      </tr>
+			{% endfor %}
+
+
+
 	</table>
             </div>
       </div>
